@@ -57,6 +57,12 @@ def prepend_sentence(sentence, max_syllables):
     return prepended_sentence
 
 
+def fill_sentence(sentence, max_syllables):
+    while syl.sentence_syllables(sentence) < max_syllables:
+        sentence = prepend_sentence(sentence, max_syllables)
+    return sentence
+
+
 def generate_limerick(triplet_syllables=8, doublet_syllables=5):
     starting_triplet = starting_words(num_rhymes=3, num_syllables=triplet_syllables)
     starting_doublet = starting_words(num_rhymes=2, num_syllables=doublet_syllables)
@@ -64,13 +70,15 @@ def generate_limerick(triplet_syllables=8, doublet_syllables=5):
     doublet = []
     for i in range(0, 3):
         sentence = starting_triplet[i]
-        while syl.sentence_syllables(sentence) < triplet_syllables:
-            sentence = prepend_sentence(sentence, triplet_syllables)
+        sentence = fill_sentence(sentence, triplet_syllables)
+        # while syl.sentence_syllables(sentence) < triplet_syllables:
+        #     sentence = prepend_sentence(sentence, triplet_syllables)
         triplet.append(sentence)
     for i in range(0, 2):
         sentence = starting_doublet[i]
-        while syl.sentence_syllables(sentence) < doublet_syllables:
-            sentence = prepend_sentence(sentence, doublet_syllables)
+        sentence = fill_sentence(sentence, doublet_syllables)
+        # while syl.sentence_syllables(sentence) < doublet_syllables:
+        #     sentence = prepend_sentence(sentence, doublet_syllables)
         doublet.append(sentence)
     limerick_list = [triplet[0], triplet[1], doublet[0], doublet[1], triplet[2]]
     limerick = "\n".join(limerick_list)
