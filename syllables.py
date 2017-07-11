@@ -2,6 +2,7 @@ import pronouncing
 
 
 def equal_list(l):
+    # is every element in the list the same?
     return l.count(l[0]) == len(l)
 
 
@@ -10,10 +11,13 @@ def strip_punc(s):
 
 
 def word_syllables(word):
-    word = strip_punc(word.lower())
-    phones = pronouncing.phones_for_word(word)
-    count = pronouncing.syllable_count(phones[0])
-    return count
+    if word:
+        word = strip_punc(word.lower())
+        phones = pronouncing.phones_for_word(word)
+        count = pronouncing.syllable_count(phones[0])
+        return count
+    else:
+        return 0
 
 
 def sentence_syllables(sentence):

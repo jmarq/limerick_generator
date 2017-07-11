@@ -1,5 +1,70 @@
-from limerick import starting_words, fill_sentence
+import syllables as syl
+import pronouncing
+import random
 import re
+
+
+pronouncing.init_cmu()
+valid_words = pronouncing.lookup.keys()
+valid_words.sort()
+
+# make lists of words that are 8 syllables or less, 7 syllables or less, 6 or less, etc down to 1
+# store as variables so we don't have to run that regex over and over
+n_syllables_or_less = {}
+for i in range(1, 10):
+    regex = "^[A-Z\s]*(([A-Z]{2}[0-9])[\sA-Z]*){,%d}$" % i
+    n_syllables_or_less[i] = pronouncing.search(regex)
+
+
+def valid_rhymes(word, num_syllables=8):
+    word_rhymes = pronouncing.rhymes(word)
+    word_valid_rhymes = filter(lambda(w): w in n_syllables_or_less[num_syllables], word_rhymes)
+    return word_valid_rhymes
+
+
+def choose_from_rhymes(rhymes):
+    choice = random.choice(rhymes)
+    rhymes.remove(choice)
+    return choice
+
+
+def starting_words(num_rhymes=3, num_syllables=8):
+    # num_rhymes is the number of total words returned
+    done = False
+    word = ""
+    word_valid_rhymes = []
+    while not done:
+        word = random.choice(n_syllables_or_less[num_syllables])
+        word_valid_rhymes = valid_rhymes(word, num_syllables)
+        if len(word_valid_rhymes) >= num_rhymes:
+            done = True
+    # "word" is the starting word
+    words = [word]
+    while len(words) < num_rhymes:
+        words.append(choose_from_rhymes(word_valid_rhymes))
+    return words
+    # find word less than or equal to 8 syllables that has rhymes that are 8 syllables or less
+    # make a list of those valid rhymes
+    # choose 2 distinct words from that list
+    # find word less than or equal to 5 syllables that has rhymes that are 5 syllables or less
+    # make a list of those valid rhymes
+    # choose 1 word from that list
+
+
+def prepend_sentence(sentence, max_syllables):
+    current_syllables = syl.sentence_syllables(sentence)
+    needed_syllables = max_syllables - current_syllables
+    new_word = random.choice(n_syllables_or_less[needed_syllables])
+    prepended_sentence = new_word+" "+sentence
+    return prepended_sentence
+
+
+def fill_sentence(sentence, max_syllables):
+    while syl.sentence_syllables(sentence) < max_syllables:
+        sentence = prepend_sentence(sentence, max_syllables)
+    return sentence
+
+
 
 
 def parse_rhyme_pattern(rhyme_pattern):
@@ -52,9 +117,10 @@ def generate_poem(rhyme_pattern):
     rhyme_pattern_template = re.sub("@[1-9]+[A-Za-z]", "%s", rhyme_pattern)
     return rhyme_pattern_template % tuple(phrases)
 
+limerick_patterns = ["@8a\n@8a\n@5b\n@5b\n@8a", "@9a\n@9a\n@6b\n@6b\n@9a"]
 
 if __name__ == "__main__":
-    print generate_poem("@8a\n@8a\n@5b\n@5b\n@8a\n-----------------")
+    print generate_poem(limerick_patterns[0]+"\n-----------------")
     print generate_poem("@2a @2b, @2a @2b, @5c\n"*2+"-----------------")
     print "\n"
     print generate_poem("@1a @1b @1c @1d @1e\n"*2)
