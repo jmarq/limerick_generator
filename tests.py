@@ -2,6 +2,7 @@ import unittest
 import syllables
 import poem
 
+
 class SyllablesTestCase(unittest.TestCase):
     def test_word_syllables(self):
         self.assertEquals(syllables.word_syllables("basketball"), 3)
@@ -14,7 +15,7 @@ class SyllablesTestCase(unittest.TestCase):
 
 class PoemsTestCase(unittest.TestCase):
     def test_starting_words(self):
-        num_syllables= 5
+        num_syllables = 5
         num_rhymes = 3
         starting_words = poem.starting_words(num_rhymes=num_rhymes, num_syllables=num_syllables)
         # does the first starting word fit within the syllable limit?

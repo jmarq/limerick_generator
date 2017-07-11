@@ -65,8 +65,6 @@ def fill_sentence(sentence, max_syllables):
     return sentence
 
 
-
-
 def parse_rhyme_pattern(rhyme_pattern):
     # "there once was a @4a, who @7a, and @4b, so @4b, @8a"
     # [(a,4),(a,7),(b,4),(b,4),(a,8)]
