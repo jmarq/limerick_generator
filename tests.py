@@ -25,3 +25,17 @@ class PoemsTestCase(unittest.TestCase):
         # do we have enough rhymes?
         self.assertTrue(len(starting_words) == num_rhymes)
 
+
+class RhymePatternTestCase(unittest.TestCase):
+    def test_parse(self):
+        pattern = "@2a @3b @5a"
+        parsed_pattern = poem.parse_rhyme_pattern(pattern)
+        self.assertEquals(parsed_pattern, [('a',2),('b',3),('a',5)])
+    
+    def test_pattern_stats(self):
+        parsed_pattern = [('a',2),('b',3),('a',5)]
+        pattern_stats = poem.generate_pattern_stats(parsed_pattern)
+        self.assertEquals(pattern_stats['a']['max_syllables'], 5)
+        self.assertEquals(pattern_stats['a']['count'], 2)
+
+
