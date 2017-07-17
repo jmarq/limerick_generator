@@ -12,6 +12,24 @@ class SyllablesTestCase(unittest.TestCase):
         sentence = "Testing is fun"
         self.assertEquals(syllables.sentence_syllables(sentence), 4)
 
+    def test_vowel_phones(self):
+        phrase = "slow motion"
+        vowel_phones = syllables.vowel_phones_for_phrase(phrase)
+        self.assertEquals(len(vowel_phones), 3)
+
+    def test_rhyme_syllables_match(self):
+        phrases = ["at my house", "a sly mouse"]
+        match = syllables.rhyme_and_syllables_match(phrases, num_syllables=2)
+        self.assertTrue(match)
+        phrases2 = ['four syllables' , 'a six syllable phrase']
+        match2 = syllables.rhyme_and_syllables_match(phrases2, num_syllables=2)          
+        self.assertFalse(match2)
+
+    def test_same_number_of_syllables(self):
+        phrases = ['my code can always get better', 'a dog thought about his limits']
+        self.assertTrue(syllables.same_number_of_syllables(phrases))
+
+
 
 class PoemsTestCase(unittest.TestCase):
     def test_starting_words(self):
@@ -24,6 +42,15 @@ class PoemsTestCase(unittest.TestCase):
         self.assertTrue(starting_words[1] in poem.valid_rhymes(starting_words[0], num_syllables=num_syllables))
         # do we have enough rhymes?
         self.assertTrue(len(starting_words) == num_rhymes)
+
+
+    def test_generate_poem(self):
+        poem_pattern = "@2a::@2a::@2a"
+        new_poem = poem.generate_poem(poem_pattern)
+        poem_syllables = syllables.sentence_syllables(new_poem.replace("::"," "))
+        self.assertEquals(poem_syllables, 6)
+        rhyme_groups = new_poem.split("::")
+        self.assertTrue(syllables.rhyme_and_syllables_match(rhyme_groups, num_syllables=1))
 
 
 class RhymePatternTestCase(unittest.TestCase):
